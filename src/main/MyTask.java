@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.RecursiveTask;
 
-import static main.Util.merge2FilesAndDeletePrevious;
+import static main.FilesUtil.merge2FilesAndDeletePrevious;
 
 public class MyTask extends RecursiveTask<String> {
 

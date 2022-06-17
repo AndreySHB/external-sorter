@@ -12,7 +12,7 @@ import java.util.List;
 
 import static main.Constants.DIRECTORY;
 
-public class Util {
+public class FilesUtil {
     public static String merge2FilesAndDeletePrevious(String leftName, String rightName) throws IOException {
         String fileName = leftName + rightName;
         Path newFile = Paths.get(String.valueOf(DIRECTORY), fileName);
@@ -53,7 +53,7 @@ public class Util {
         return fileName;
     }
 
-    public static List<String> readAndSortNStrings(BufferedReader reader, int batchSize) throws IOException {
+    public static List<String> readStringsFromFileAndSort(BufferedReader reader, int batchSize) throws IOException {
         List<String> list = new ArrayList<>();
         for (int i = 0; reader.ready() && i < batchSize; i++) {
             list.add(reader.readLine());

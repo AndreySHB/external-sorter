@@ -15,27 +15,25 @@ import java.util.concurrent.LinkedBlockingQueue;
 
 import static main.Constants.*;
 import static main.StringGenerator.generateStr;
-import static main.Util.readAndSortNStrings;
+import static main.FilesUtil.readStringsFromFileAndSort;
 
 public class Main {
     public static volatile boolean prodIsDone = false;
-    public static List<String> filenames = new ArrayList<>();
-    public static ForkJoinPool forkJoinPool = new ForkJoinPool();
 
     public static void main(String[] args) throws IOException, InterruptedException {
-
         Files.createDirectory(DIRECTORY);
         Path file = Files.createFile(FILE_TXT);
         StringGenerator.generateStrings(1_000_000, 100, file);
 
         //chopping file into small sorted peaces
+        List<String> filenames = new ArrayList<>();
         long start = System.currentTimeMillis();
         BlockingQueue<List<String>> queue = new LinkedBlockingQueue<>(1);
         try (BufferedReader reader = Files.newBufferedReader(FILE_TXT)) {
             Thread producer = new Thread(() -> {
                 try {
                     while (reader.ready()) {
-                        List<String> sorted = readAndSortNStrings(reader, BATCH_SIZE);
+                        List<String> sorted = readStringsFromFileAndSort(reader, BATCH_SIZE);
                         queue.put(sorted);
                     }
                     prodIsDone = true;
@@ -65,6 +63,7 @@ public class Main {
             System.out.printf("chopping time %d - s%n", (end - start) / 1000);
 
             //external sorting
+            ForkJoinPool forkJoinPool = new ForkJoinPool();
             String filename = forkJoinPool.invoke(new MyTask(filenames));
             Path result = Paths.get(String.valueOf(DIRECTORY), filename);
             result.toFile().renameTo(Paths.get(String.valueOf(DIRECTORY),"Sorted.txt").toFile());
