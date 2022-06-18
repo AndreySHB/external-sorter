@@ -20,9 +20,10 @@ public class MyTask extends RecursiveTask<String> {
             List<String> leftNames = filenames.subList(0, size >>> 1);
             List<String> rightNames = filenames.subList(size >>> 1, size);
             try {
-                String leftName = new MyTask(leftNames).invoke();
-                String rightName = new MyTask(rightNames).invoke();
-                return merge2FilesAndDeletePrevious(leftName, rightName);
+                MyTask leftTask = new MyTask(leftNames);
+                MyTask rightTask = new MyTask(rightNames);
+                invokeAll(leftTask,rightTask);
+                return merge2FilesAndDeletePrevious(leftTask.get(), rightTask.get());
             } catch (Exception e) {
                 e.printStackTrace();
             }

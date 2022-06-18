@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.LinkedBlockingQueue;
 
@@ -23,7 +24,7 @@ public class Main {
     public static void main(String[] args) throws IOException, InterruptedException {
         Files.createDirectory(DIRECTORY);
         Path file = Files.createFile(FILE_TXT);
-        StringGenerator.generateStrings(1_000_000, 100, file);
+        StringGenerator.generateStrings(NUM_STRINGS, 100, file);
 
         //chopping file into small sorted peaces
         List<String> filenames = new ArrayList<>();
@@ -45,7 +46,7 @@ public class Main {
                 try {
                     while (!prodIsDone || !queue.isEmpty()) {
                         List<String> sorted = queue.take();
-                        Path newFile = Paths.get(String.valueOf(DIRECTORY),generateStr());
+                        Path newFile = Paths.get(String.valueOf(DIRECTORY), generateStr());
                         Files.createFile(newFile);
                         try (PrintStream printStream = new PrintStream(Files.newOutputStream(newFile))) {
                             Objects.requireNonNull(sorted).forEach(printStream::println);
@@ -66,7 +67,7 @@ public class Main {
             ForkJoinPool forkJoinPool = new ForkJoinPool();
             String filename = forkJoinPool.invoke(new MyTask(filenames));
             Path result = Paths.get(String.valueOf(DIRECTORY), filename);
-            result.toFile().renameTo(Paths.get(String.valueOf(DIRECTORY),"Sorted.txt").toFile());
+            result.toFile().renameTo(Paths.get(String.valueOf(DIRECTORY), "Sorted.txt").toFile());
             long end2 = System.currentTimeMillis();
 
             System.out.printf("sorting time %d - s%n", (end2 - end) / 1000);
