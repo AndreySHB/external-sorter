@@ -14,7 +14,7 @@ public class StringGenerator {
         long start = System.currentTimeMillis();
         try (PrintStream ps = new PrintStream(Files.newOutputStream(file))) {
             for (int i = 0; i < strNumber; i++) {
-                String randomStr = new BigInteger(maxStrBitSize, random).toString(32);
+                String randomStr = new BigInteger(maxStrBitSize, random).toString(36);
                 ps.println(randomStr);
             }
         }
